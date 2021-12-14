@@ -198,10 +198,10 @@
             $$ \mathcal{L}(\theta) = \mathbb{E}_{\mathbf{z},\mathbf{y},\alpha} [ (A(G(F_{z}(\mathbf{z}, \alpha), F_{y}(\mathbf{y}, \alpha))))  -  (A(G(\mathbf{z}, \mathbf{y})) + \alpha))^2 ]   $$
             where the first term represents the score of the modified image after applying the function F with
             parameters z, y, and α, and the second term simply represents the score of the original image increased
-            or decreased by α. Fz computes a diverse direction θ with a noise ϵ as $$ F_{z}(\mathbf{z}, \alpha) = \mathbf{z} + \alpha \cdot \mathbf{NN}(\mathbf{z}, \epsilon) $$
+            or decreased by α. F<sub>z</sub> computes a diverse direction θ with a noise ϵ as $$ F_{z}(\mathbf{z}, \alpha) = \mathbf{z} + \alpha \cdot \mathbf{NN}(\mathbf{z}, \epsilon) $$
             Moreover, we also learn a direction for class vectors as follows:
             $$  \mathcal{L}(\theta) = \mathbb{E}_{\mathbf{z},\mathbf{y},\alpha} [ A(G(F_{z}(\mathbf{z}, \alpha), F_{y}(\mathbf{y}, \alpha)))  -  (A(G(\mathbf{z}, \mathbf{y})) + \alpha))^2 ]  $$
-            where F<sub>y</sub> is calculated as $$ F_{y}(\mathbf{y}, \alpha) = \mathbf{y} + \alpha \cdot \mathbf{NN}(\mathbf{y}, \epsilon) $$ where NN is a two layer neural network.
+            where F<sub>y</sub> is calculated using a 2-layer neural network (NN) as follows $$ F_{y}(\mathbf{y}, \alpha) = \mathbf{y} + \alpha \cdot \mathbf{NN}(\mathbf{y}, \epsilon) $$
         </p>
       </div>
     </div>
