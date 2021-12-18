@@ -1,0 +1,27 @@
+gpu: 1
+train_name: "deneme"
+log_folder: "logs"
+debug: True
+
+data:
+  artbreeder_folder: "./data/creative_images_218k"
+  biggan_generated_train: "./data/biggan_generated_train"
+  biggan_generated_val: "./data/biggan_generated_val"
+  train_dir: "./data/train"
+  val_dir: "./data/val"
+  creative_data: "anc_creative_frames.txt"
+  random_data: "anc_zero_frames.txt"
+  input_size: 224
+  task_type: "classification"
+
+train:
+  model: "efficientnet-b0"
+  batch_size: 16
+  optimizer: RAdam
+  learning_rate: 0.001
+  weight_decay: 0
+  num_epoch: 300
+  validation_interval: 1
+  loss: "CrossEntropy"
+  num_workers: 4
+  pretrained: ""
