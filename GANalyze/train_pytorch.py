@@ -1,13 +1,12 @@
 import argparse, random
 import json, cv2
-import os, sys
+import os
 import subprocess
 
 from optimizers import RAdam
 
 import numpy as np
 import torch
-import torch.optim as optim
 
 import assessors
 import generators
@@ -60,7 +59,7 @@ checkpoint_dir = os.path.join(
     "_".join(opts["generator"]),
     opts["assessor"]+"_"+opts["assessor_path"].split("/")[-1],
     "_".join(opts["transformer"]),
-    "artbreeder_class:"+str(opts["artbreeder_class"]), 
+    "artbreeder_class:"+str(opts["artbreeder_class"]),
     version)
 
 print("Checkpoint: {}".format(checkpoint_dir))
@@ -183,7 +182,7 @@ zs = utils.common.truncated_z_sample(num_samples, dim_z, truncation)
 if args.artbreeder_class ==1:
     ys = sample_artbreeder_class(num_samples)
     print("Artbreeder type class vector sampling is used")
-else:    
+else:
     ys = np.random.randint(0, vocab_size, size=zs.shape[0])
     print("One-hot class vector sampling is used")
 
@@ -202,19 +201,19 @@ for batch_start in range(0, num_samples, batch_size):
     # input batch
     s = slice(batch_start, min(num_samples, batch_start + batch_size))
     z = torch.from_numpy(zs[s]).type(torch.FloatTensor).to(device)
-    
+
     if args.artbreeder_class == 1:
         y = torch.from_numpy(ys[s]).type(torch.FloatTensor).to(device)
     else:
         y = torch.from_numpy(ys[s]).to(device)
         #y = torch.ones_like(y)*248
-            
+
     # ganalyze steps
     if args.artbreeder_class == 1:
         gan_images = generator(z, y)
     else:
         gan_images = generator(z, utils.pytorch.one_hot(y))
-    
+
     gan_images = utils.pytorch.denorm(gan_images)
     gan_images_random_np = gan_images.permute(0, 2, 3, 1).detach().cpu().numpy()
     #print("debug_channel/{}.jpg".format(np.random.random()))
@@ -236,12 +235,12 @@ for batch_start in range(0, num_samples, batch_size):
                 temp_generated = (train_alpha_b - train_alpha_a) * random.random() + train_alpha_a
                 if (out_score[i]+temp_generated) > 0 and (out_score[i]+temp_generated < 1):
                     break
-            step_sizes.append(temp_generated)        
+            step_sizes.append(temp_generated)
         step_sizes = np.array(step_sizes)
     else:
         step_sizes = (train_alpha_b - train_alpha_a) * \
             np.random.random(size=(batch_size)) + train_alpha_a  # sample step_sizes
-    
+
 
     step_sizes_broadcast = np.repeat(step_sizes, dim_z).reshape([batch_size, dim_z])
     step_sizes_broadcast = torch.from_numpy(step_sizes_broadcast).type(torch.FloatTensor).to(device)
@@ -249,10 +248,10 @@ for batch_start in range(0, num_samples, batch_size):
     if args.class_direction == 1:
         step_sizes_broadcast_y = np.repeat(step_sizes, vocab_size).reshape([batch_size, vocab_size])
         step_sizes_broadcast_y = torch.from_numpy(step_sizes_broadcast_y).type(torch.FloatTensor).to(device)
-        
+
     target_scores = out_scores + torch.from_numpy(step_sizes).to(device).float()
-    
-    # assert not(args.artbreeder_class == 0 and args.class_direction == 1) 
+
+    # assert not(args.artbreeder_class == 0 and args.class_direction == 1)
 
     if args.artbreeder_class == 1:
         if args.class_direction == 1:
@@ -277,7 +276,7 @@ for batch_start in range(0, num_samples, batch_size):
     gan_images_transformed = gan_images_transformed.view(-1, *gan_images_transformed.shape[-3:])
     gan_images_transformed = gan_images_transformed.to(device)
     out_scores_transformed = output_transform(assessor(gan_images_transformed)).to(device).float()
-    
+
     # out_scores_transformed[(out_scores>1) | (out_scores<0)] = target_scores[(out_scores>1) | (out_scores<0)]
     # out_scores_transformed[(out_scores_transformed>1) | (out_scores_transformed<0)] = target_scores[(out_scores_transformed>1) | (out_scores_transformed<0)]
 
@@ -296,10 +295,10 @@ for batch_start in range(0, num_samples, batch_size):
 
     # print loss
     losses.update(loss.item(), batch_size)
-    
+
     if batch_start == 0:
         assert not os.path.exists("train_logs/{}.log".format(args.experiment_name))
-    
+
     checkpoint_avg_loss = np.mean(checkpoint_loss)
 
     with open("train_logs/{}.log".format(args.experiment_name),"a+") as file:
@@ -312,7 +311,7 @@ for batch_start in range(0, num_samples, batch_size):
         checkpoint_loss = []
         print("saving checkpoint")
         torch.save(transformation.state_dict(), os.path.join(checkpoint_dir, "pytorch_model_{}.pth".format(batch_start)))
-        
+
         # debug image write
         os.makedirs("train_debug_images/{}".format(args.experiment_name), exist_ok=True)
         random_images = []
@@ -321,20 +320,20 @@ for batch_start in range(0, num_samples, batch_size):
         transformed_scores = out_scores_transformed.detach().cpu().numpy()
         for i, img in enumerate(gan_images_random_np):
             img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-            img = cv2.putText(img, "{:.3f}".format(random_scores[i]), (50,50), cv2.FONT_HERSHEY_SIMPLEX,  
+            img = cv2.putText(img, "{:.3f}".format(random_scores[i]), (50,50), cv2.FONT_HERSHEY_SIMPLEX,
                    1, (255, 255, 0) , 2, cv2.LINE_AA)
-            img = cv2.putText(img, "{:.3f}".format(step_sizes[i]), (50,450), cv2.FONT_HERSHEY_SIMPLEX,  
+            img = cv2.putText(img, "{:.3f}".format(step_sizes[i]), (50,450), cv2.FONT_HERSHEY_SIMPLEX,
                    1, (255, 255, 0) , 2, cv2.LINE_AA)
             random_images.append(img)
 
         for i, img in enumerate(gan_images_transformed_np):
             img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-            img = cv2.putText(img, "{:.3f}".format(transformed_scores[i]), (50,50), cv2.FONT_HERSHEY_SIMPLEX,  
+            img = cv2.putText(img, "{:.3f}".format(transformed_scores[i]), (50,50), cv2.FONT_HERSHEY_SIMPLEX,
                    1, (255, 255, 0) , 2, cv2.LINE_AA)
             transformed_images.append(img)
-        
+
         cv2.imwrite("train_debug_images/{}/{}_{:.3f}.jpg".format(args.experiment_name, batch_start, checkpoint_avg_loss), np.hstack([np.vstack(random_images), np.vstack(transformed_images)]))
-    
+
     optim_iter = optim_iter + 1
 
 torch.save(transformation.state_dict(), os.path.join(checkpoint_dir, "pytorch_model_{}.pth".format(opts["num_samples"])))

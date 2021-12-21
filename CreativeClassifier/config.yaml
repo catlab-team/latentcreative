@@ -12,7 +12,6 @@ data:
   creative_data: "anc_creative_frames.txt"
   random_data: "anc_zero_frames.txt"
   input_size: 224
-  task_type: "classification"
 
 train:
   model: "efficientnet-b0"
