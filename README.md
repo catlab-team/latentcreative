@@ -48,9 +48,9 @@ After download, you can use the training script below to train the proposed fram
 
 ```bash
 python train_pytorch.py --assessor_path ../CreativeClassifier/models/best.pth \
---experiment_name debug --artbreeder_class 0 --class_direction 1 --num_samples 400000 \
+--experiment_name experiment --artbreeder_class 0 --class_direction 1 --num_samples 400000 \
 --clipped_step_size 1 --transformer AdaptiveDirectionZAdaptiveDirectionY_noise_nonlinear class_reg=1000,noise_dim=8 \
---batch_size 8 --learning_rate 0.001 --multiway_linear 0
+--batch_size 8 --learning_rate 0.0001 --multiway_linear 0
 ```
 
 ## Testing
