@@ -58,7 +58,7 @@ python train_pytorch.py --assessor_path ../CreativeClassifier/models/best.pth \
 After training, you can use the testing script below to produce images.
 
 ```bash
-python test_artbreed.py --checkpoint 400000 --checkpoint_dir Checkpoints/debug/biggan512_None/creative_classifier_best.pth/AdaptiveDirectionZAdaptiveDirectionY_noise_nonlinear_class_reg=1000,noise_dim=8/artbreeder_class:0/265544a
+python test_artbreed.py --checkpoint 400000 --checkpoint_dir Checkpoints/experiment/biggan512_None/creative_classifier_best.pth/AdaptiveDirectionZAdaptiveDirectionY_noise_nonlinear_class_reg=1000,noise_dim=8/artbreeder_class:0/[HASH]
 ```
 
 
