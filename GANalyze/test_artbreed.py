@@ -31,7 +31,7 @@ parser.add_argument('--mode', default="bigger_step", choices=["iterative", "bigg
 parser.add_argument('--one_way', type=int, default=0, help='0 -> default 1-> if multiway, just one way result')
 parser.add_argument('--which_way', type=int, default=0, help='if one_way is 1, which way you want to calculate, -1-> interpolation experiment')
 
-parser.add_argument('--class_direction', type=int, default=0, help='whether class will change or not')
+parser.add_argument('--class_direction', type=int, default=1, help='whether class will change or not')
 parser.add_argument('--seed', type=int, default=0, help='whether class will change or not')
 
 args = parser.parse_args()
@@ -53,7 +53,7 @@ if not isinstance(train_opts["transformer"], list):
     train_opts["transformer"] = [train_opts["transformer"]]
 
 test_version = str(subprocess.check_output(["git", "describe", "--always"]).strip())
-result_dir = os.path.join("./interpolation_experiment","seed_"+str(opts["seed"]),
+result_dir = os.path.join("./experiment","seed_"+str(opts["seed"]),
                           "-".join(train_opts["generator"]),
                           train_opts["assessor"],
                           "-".join(train_opts["transformer"]),

@@ -1,3 +1,4 @@
 /CreativeClassifier/data
 /CreativeClassifier/logs
 *.pyc
+*.pth
